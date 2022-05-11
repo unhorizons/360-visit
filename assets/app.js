@@ -1,33 +1,184 @@
-const app = document.body;
+const container = document.body;
+const tooltip = document.querySelector('.tooltip');
+let currentSprite = false;
 
+// icon et images
+const icons = {
+    info: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAADBklEQVR42u2bP08UQRiHnzFaSYCI/xoksdBIqGwIiYWRUBISExpCQ0ej38FWOmlIKKhoMPEbaCxsrrHiYrQgOSlQEaICrT+LHSPZzNzt3s3c3Hn7lHvLzvv82L2dm30XKioqKgYY062BJF0HpoA7wARwBbhsPz4DjoEG8AnYNcZ8Sx1Op8IXJM1KWpdUV3nq9m9nJV1I7VNGfEzSM0mNNqR9NOwxx1L7NRMflbQm6SSgeJ4TO8Zoat+8/LKkg4jieQ4kLaf2RtKwpJ0uiufZkTScSn5S0l5C+b/sSZrstvyMpKPU5uc4kjTTjkvpeYCkaeA1/+7hvcIZMGuMqUULQNIU8Aa4ltrWwyHwyBizGzwASSPAe+B2assW7AH3jTE/i+xcZoa12Qfy2Bo3i+5cKABl99zF1GYlWFTBeULLS0DZrOsDcDNggTXgc27bLWA64BhfgHvGmB8dHUXZ1DM0S45xliKMs9bKr+klIOkqsBrwv9JtVq1DewEAT4Ch1BYdMGQdygeg7Df4SmqDAKyoyXpCszPgITCeuvoAjFuX0gE8jljUdv7bCtiOOJ7XpdUZ8L/gdXHOA5QtYH5NXXVgbrgWWn1nwFTqaiPgdPIFcDd1tRFwOl307DwRuZgXwLvctgfA04hjOp18AcReZ6sZY16e3yDpUuQxnU6+S2AkcjEpcDr1zxOXSPgCKLSa0mc4nXwB/EpdbQScTr4AGqmrjYDTyRfAx9TVRsDp5Aug8LJyH+F0cgZg58z11BUHpO5ruGh2G3ybuuqAeF2aBfAqddUB8bq0OgP2U1cegH3aOQOMMb+BrdTVB2DLupQLwLIOnKY26IBT6+ClaQDGmO/ARmqLDtiwDn7HVkcY+EdjNoTlCI+tYhO2iUppm6HKslPUq2qQKHpUe8AFsjaUXuUQWCgqXyoAG8IuME/WkNRrnAHzZfqDSgdgQ6gBc2Td3b3CMTBXtkOsIzTIjZLnQhjcVtlcEIPZLJ0LoVvt8s/Va+3yuSAG84UJRxB98cpM9dJURUVFxSDzBxKde4Lk3/h2AAAAAElFTkSuQmCC'
+}
+
+class Scene {
+    constructor(image) {
+        this.image = image;
+        this.points = [];
+        this.sprites = [];
+        this.scene = null;
+    }
+
+    createScene(scene) {
+        this.scene = scene;
+
+        const geometry = new THREE.SphereGeometry(50, 32, 32);
+        const sphereTexture = new THREE.TextureLoader().load(this.image)
+        sphereTexture.wrapS = THREE.RepeatWrapping;
+        sphereTexture.repeat.x = -1; // on inverse l'image dans la sphere
+
+        const material = new THREE.MeshBasicMaterial({
+            map: sphereTexture,
+            side: THREE.DoubleSide
+        });
+        material.transparent = true;
+
+        this.sphere = new THREE.Mesh(geometry, material);
+        this.scene.add(this.sphere);
+
+        this.points.forEach(this.addTooltip.bind(this));
+    }
+
+    addPoint(point) {
+        this.points.push(point);
+        return this;
+    }
+
+    addTooltip(point) {
+        const spriteMaterial = new THREE.SpriteMaterial({map: new THREE.TextureLoader().load(icons.info)});
+        spriteMaterial.transparent = true;
+        const sprite = new THREE.Sprite(spriteMaterial);
+        
+        sprite.name = point.name;
+        sprite.position.copy(point.position.clone().normalize().multiplyScalar(40));
+        sprite.scale.multiplyScalar(2);
+        this.scene.add(sprite);
+        this.sprites.push(sprite);
+
+        sprite.onClick = () => {
+            if (point.scene) {
+                this.destroy()
+                point.scene.createScene(this.scene);
+                point.scene.appear();
+            }
+        };
+    }
+
+    destroy () {
+        TweenLite.to(this.sphere.material, 1, {
+            opacity: 0, 
+            onComplete: () => this.scene.remove(this.sphere)
+        });
+
+        this.sprites.forEach(sprite => {
+            TweenLite.to(sprite.scale, 0.3, {
+                x: 0, 
+                y: 0, 
+                z: 0, 
+                onComplete: () => this.scene.remove(sprite)
+            });
+        });
+    }
+
+
+    appear () {
+        this.sphere.material.opacity = 0;
+        TweenLite.to(this.sphere.material, 1, {opacity: 1});
+
+        this.sprites.forEach(sprite => {
+            sprite.scale.set(0, 0, 0);
+            TweenLite.to(sprite.scale, 0.3, {x: 2, y: 2, z: 2});
+        });
+    }
+}  
+
+// scene
 const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer();
+const rayCaster = new THREE.Raycaster();
 renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
-
+container.appendChild(renderer.domElement);
 
 // mouvement de la camera
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
-camera.position.set(-10, 0, 0);
-controls.rotateSpeed = 0.3;
-controls.enableZoom = false;
+camera.position.set(-1, 0, 0);
+controls.rotateSpeed = 0.4;
+controls.enableZoom = true;
 controls.update();
 
 
-// creation de la sphere 360
-const geometry = new THREE.SphereGeometry(50, 32, 32);
-const sphereTexture = new THREE.TextureLoader().load('../images/test/3.jpg')
-sphereTexture.wrapS = THREE.RepeatWrapping;
-sphereTexture.repeat.x = -1; // on inverse l'image dans la sphere
+window.addEventListener('resize', () => {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+})
 
-const material = new THREE.MeshBasicMaterial({
-    map: sphereTexture,
-    side: THREE.DoubleSide
+container.addEventListener('click', e => {
+    intersections = rayCaster.intersectObjects(scene.children);
+    intersections.forEach(intersection => {
+        if (intersection.object.type === 'Sprite') {
+            intersection.object.onClick();
+        }
+    })
 });
-const sphere = new THREE.Mesh(geometry, material);
-scene.add(sphere);
 
+container.addEventListener('mousemove', e => {
+    let mouse = new THREE.Vector2(
+        (e.clientX / window.innerWidth) * 2 - 1,
+        - (e.clientY / window.innerHeight) * 2 + 1
+    );
+
+    foundSprite = false;
+    rayCaster.setFromCamera(mouse, camera);
+    intersections = rayCaster.intersectObjects(scene.children);
+    intersections.forEach(intersection => {
+        if (intersection.object.type === 'Sprite') {
+            let p = intersection.object.position.clone().project(camera);
+            tooltip.style.top = ((-1 * p.y + 1) * window.innerHeight / 2) + 'px';
+            tooltip.style.left = ((p.x + 1) * window.innerWidth / 2) + 'px';
+            tooltip.classList.add('is-active');
+            tooltip.innerHTML = intersection.object.name;
+            currentSprite = intersection.object;
+            foundSprite = true;
+        }
+    });
+
+    if (foundSprite === false && currentSprite) {
+        tooltip.classList.remove('is-active');
+        currentSprite = false;
+    }
+})
+
+// navigation 360
+let building = new Scene('../images/building.jpg');
+let groundFloor = new Scene('../images/ground_floor.jpg');
+let firstStage = new Scene('../images/first_stage.jpg');
+let firstStageClassrooms = new Scene('../images/first_stage_classrooms.jpg');
+
+building
+    .addPoint({position: new THREE.Vector3(47.33136040872327, 2.519483092465857, 14.960382488102171), name: 'Entrée principale', scene: groundFloor})
+    .addPoint({position: new THREE.Vector3(44.451650389036615, 1.8276682097440096, -22.204281428809807), name: 'Entrée étudiants'})
+    .addPoint({position: new THREE.Vector3(-0.9711015127931042, 1.2145194921328875,-49.844689157364584), name: 'Entrée salle 401B'})
+    .addPoint({position: new THREE.Vector3(-18.848850929854457, 7.12026109712192, -45.687766950154774), name: 'Bâtiment UNH 2'});
+groundFloor
+    .addPoint({position: new THREE.Vector3(49.60657164089393, -0.4804500526325468, 3.754901360621054), name: 'Sortie', scene: building})
+
+
+building.createScene(scene);
+
+
+
+/// recuperation des points
+// container.addEventListener('click', e => {
+//     let mouse = new THREE.Vector2(
+//         (e.clientX / window.innerWidth) * 2 - 1,
+//         - (e.clientY / window.innerHeight) * 2 + 1
+//     );
+
+//     rayCaster.setFromCamera(mouse, camera);
+//     let intersections = rayCaster.intersectObject(groundFloor.sphere);
+
+//     if (intersections.length > 0) {
+//         console.log(intersections[0].point);
+//     }
+// });
 
 
 // affichage à l'écran
@@ -35,9 +186,3 @@ scene.add(sphere);
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
 })();
-
-window.addEventListener('resize', () => {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-})
