@@ -9,6 +9,8 @@ body, html {
     overflow: hidden;
     font-family: sans-serif;
     color: rgba(0, 0, 0, .7);
+    opacity: 1;
+    transition: opacity .3s;
 }
 
 .tooltip {

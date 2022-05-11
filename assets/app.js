@@ -25,9 +25,9 @@ class Scene {
 
         const material = new THREE.MeshBasicMaterial({
             map: sphereTexture,
-            side: THREE.DoubleSide
+            side: THREE.DoubleSide,
+            transparent: false
         });
-        material.transparent = true;
 
         this.sphere = new THREE.Mesh(geometry, material);
         this.scene.add(this.sphere);
@@ -61,11 +61,7 @@ class Scene {
     }
 
     destroy () {
-        TweenLite.to(this.sphere.material, 1, {
-            opacity: 0, 
-            onComplete: () => this.scene.remove(this.sphere)
-        });
-
+        this.scene.remove(this.sphere)
         this.sprites.forEach(sprite => {
             TweenLite.to(sprite.scale, 0.3, {
                 x: 0, 
@@ -78,15 +74,12 @@ class Scene {
 
 
     appear () {
-        this.sphere.material.opacity = 0;
-        TweenLite.to(this.sphere.material, 1, {opacity: 1});
-
         this.sprites.forEach(sprite => {
             sprite.scale.set(0, 0, 0);
             TweenLite.to(sprite.scale, 0.3, {x: 2, y: 2, z: 2});
         });
     }
-}  
+}
 
 // scene
 const scene = new THREE.Scene();
@@ -159,7 +152,17 @@ building
     .addPoint({position: new THREE.Vector3(-18.848850929854457, 7.12026109712192, -45.687766950154774), name: 'Bâtiment UNH 2'});
 groundFloor
     .addPoint({position: new THREE.Vector3(49.60657164089393, -0.4804500526325468, 3.754901360621054), name: 'Sortie', scene: building})
-
+    .addPoint({position: new THREE.Vector3(24.572397747766434, 2.260405137764802, 43.16187675205984), name: 'Réception'})
+    .addPoint({position: new THREE.Vector3(-49.559082476994014, -0.28871401761632337, 4.332704956613618), name: 'Salle Justine'})
+    .addPoint({position: new THREE.Vector3(-38.88110705826111, 30.86473835729667, 4.096521262446539), name: 'Premier niveau hall', scene: firstStage});
+firstStage
+    .addPoint({position: new THREE.Vector3(-48.66248183520141, -7.552783986529731, 7.141520447222128), name: 'Bibliothèque'})
+    .addPoint({position: new THREE.Vector3(5.54584656687121, -1.3674026446842515, 49.38660598150729), name: 'Aile étudiants', scene: firstStageClassrooms})
+    .addPoint({position: new THREE.Vector3(48.241518521238035, -11.899312519703532, 2.6449164103181038), name: 'Entrée principale', scene: groundFloor});
+firstStageClassrooms
+    .addPoint({position: new THREE.Vector3(26.08254009596839, -2.56156595489417, 42.33799470769219), name: 'Salle 411 A|B'})
+    .addPoint({position: new THREE.Vector3(-19.114134423269356, 3.2156306635917375, -46.02642434373278), name: 'Salle 412 A|B'})
+    .addPoint({position: new THREE.Vector3(28.420469966119455, 1.426800064709266, -40.956400074396356), name: 'Premier niveau hall', scene: firstStage});
 
 building.createScene(scene);
 
