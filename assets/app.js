@@ -140,10 +140,10 @@ container.addEventListener('mousemove', e => {
 })
 
 // navigation 360
-let building = new Scene('../../images/building.jpg');
-let groundFloor = new Scene('../../images/ground_floor.jpg');
-let firstStage = new Scene('../../images/first_stage.jpg');
-let firstStageClassrooms = new Scene('../../images/first_stage_classrooms.jpg');
+let building = new Scene('/360-visit/images/building.jpg');
+let groundFloor = new Scene('/360-visit/images/ground_floor.jpg');
+let firstStage = new Scene('/360-visit/images/first_stage.jpg');
+let firstStageClassrooms = new Scene('/360-visit//images/first_stage_classrooms.jpg');
 
 building
     .addPoint({position: new THREE.Vector3(47.33136040872327, 2.519483092465857, 14.960382488102171), name: 'Entrée principale', scene: groundFloor})
