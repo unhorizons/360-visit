@@ -140,29 +140,44 @@ container.addEventListener('mousemove', e => {
 })
 
 // navigation 360
-let building = new Scene('/360-visit/images/building.jpg');
-let groundFloor = new Scene('/360-visit/images/ground_floor.jpg');
-let firstStage = new Scene('/360-visit/images/first_stage.jpg');
-let firstStageClassrooms = new Scene('/360-visit//images/first_stage_classrooms.jpg');
+const building = new Scene('/360-visit/images/building.jpg');
+const groundFloor = new Scene('/360-visit/images/ground_floor.jpg');
+const firstStage = new Scene('/360-visit/images/first_stage.jpg');
+const secondStage = new Scene('/360-visit/images/second_stage_b.jpg');
+const firstStageClassrooms = new Scene('/360-visit/images/first_stage_classrooms.jpg');
+const library = new Scene('/360-visit/images/library.jpg');
+const studentEntry = new Scene('/360-visit/images/student_entry');
+const building2 = new Scene('/360-visit/images/building_2.jpg');
+const justineRoom = new Scene('/360-visit/images/justine_room.jpg');
+const computerRoom = new Scene('/360-visit/images/computer_room.jpg');
 
 building
     .addPoint({position: new THREE.Vector3(47.33136040872327, 2.519483092465857, 14.960382488102171), name: 'Entrée principale', scene: groundFloor})
-    .addPoint({position: new THREE.Vector3(44.451650389036615, 1.8276682097440096, -22.204281428809807), name: 'Entrée étudiants'})
-    .addPoint({position: new THREE.Vector3(-0.9711015127931042, 1.2145194921328875,-49.844689157364584), name: 'Entrée salle 401B'})
-    .addPoint({position: new THREE.Vector3(-18.848850929854457, 7.12026109712192, -45.687766950154774), name: 'Bâtiment UNH 2'});
+    .addPoint({position: new THREE.Vector3(44.451650389036615, 1.8276682097440096, -22.204281428809807), name: 'Entrée étudiants', scene: studentEntry})
+    .addPoint({position: new THREE.Vector3(-18.848850929854457, 7.12026109712192, -45.687766950154774), name: 'Bâtiment UNH 2', scene: building2});
 groundFloor
     .addPoint({position: new THREE.Vector3(49.60657164089393, -0.4804500526325468, 3.754901360621054), name: 'Sortie', scene: building})
-    .addPoint({position: new THREE.Vector3(24.572397747766434, 2.260405137764802, 43.16187675205984), name: 'Réception'})
-    .addPoint({position: new THREE.Vector3(-49.559082476994014, -0.28871401761632337, 4.332704956613618), name: 'Salle Justine'})
-    .addPoint({position: new THREE.Vector3(-38.88110705826111, 30.86473835729667, 4.096521262446539), name: 'Premier niveau hall', scene: firstStage});
+    .addPoint({position: new THREE.Vector3(-49.559082476994014, -0.28871401761632337, 4.332704956613618), name: 'Salle Justine', scene: justineRoom})
+    .addPoint({position: new THREE.Vector3(-38.88110705826111, 30.86473835729667, 4.096521262446539), name: 'Premier niveau hall', scene: firstStage})
+    .addPoint({position: new THREE.Vector3(-23.819634699058604, 43.71926722979888, 3.8464949190525495), name: 'Deuxième niveau hall', scene: secondStage})
+    .addPoint({position: new THREE.Vector3(-23.878411663139417, 1.8499460416893405, 43.55557519011792), name: 'Entrée étudiants', scene: studentEntry})
 firstStage
-    .addPoint({position: new THREE.Vector3(-48.66248183520141, -7.552783986529731, 7.141520447222128), name: 'Bibliothèque'})
-    .addPoint({position: new THREE.Vector3(5.54584656687121, -1.3674026446842515, 49.38660598150729), name: 'Aile étudiants', scene: firstStageClassrooms})
-    .addPoint({position: new THREE.Vector3(48.241518521238035, -11.899312519703532, 2.6449164103181038), name: 'Entrée principale', scene: groundFloor});
+    .addPoint({position: new THREE.Vector3(-48.66248183520141, -7.552783986529731, 7.141520447222128), name: 'Bibliothèque', scene: library})
+    .addPoint({position: new THREE.Vector3(5.54584656687121, -1.3674026446842515, 49.38660598150729), name: 'Premier niveau espace étudiants', scene: firstStageClassrooms})
+    .addPoint({position: new THREE.Vector3(48.241518521238035, -11.899312519703532, 2.6449164103181038), name: 'Entrée principale', scene: groundFloor})
+    .addPoint({position: new THREE.Vector3(47.34569573923817, 14.840381813862937, 3.905141704169094), name: 'Deuxième niveau hall', scene: secondStage});
 firstStageClassrooms
     .addPoint({position: new THREE.Vector3(26.08254009596839, -2.56156595489417, 42.33799470769219), name: 'Salle 411 A|B'})
     .addPoint({position: new THREE.Vector3(-19.114134423269356, 3.2156306635917375, -46.02642434373278), name: 'Salle 412 A|B'})
     .addPoint({position: new THREE.Vector3(28.420469966119455, 1.426800064709266, -40.956400074396356), name: 'Premier niveau hall', scene: firstStage});
+secondStage
+    .addPoint({position: new THREE.Vector3(49.385950762568406, 2.803978083263123, 4.835943998175337), name: 'Salle d\'informatique'})
+    .addPoint({position: new THREE.Vector3(47.59218488895266, -13.335692824416519, 5.584657323807827), name: 'Bibliothèque', scene: library})
+    .addPoint({position: new THREE.Vector3(43.95220655192172, 1.9737470253266165, -23.12352471091595), name: 'Deuxième niveau espace étudiants', scene: firstStageClassrooms});
+library
+    .addPoint({position: new THREE.Vector3(39.29760859925006, 4.371600621368303, 30.214768111044766), name: 'Sortie', scene: firstStage});
+building2
+    .addPoint({position: new THREE.Vector3(49.62097342668768, 0.20027903708389744, -3.748425543781566), name: 'Bâtiment UNH 1', scene: building});
 
 building.createScene(scene);
 
