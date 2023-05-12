@@ -205,18 +205,18 @@ building.createScene(scene);
 
 
 /// recuperation des points
-container.addEventListener('click', e => {
-    let mouse = new THREE.Vector2(
-        (e.clientX / window.innerWidth) * 2 - 1,
-        - (e.clientY / window.innerHeight) * 2 + 1
-    );
+// container.addEventListener('click', e => {
+//     let mouse = new THREE.Vector2(
+//         (e.clientX / window.innerWidth) * 2 - 1,
+//         - (e.clientY / window.innerHeight) * 2 + 1
+//     );
 
-    let intersections = rayCaster.intersectObject(batiment2Niveau1.sphere);
+//     let intersections = rayCaster.intersectObject(batiment2Niveau1.sphere);
 
-    if (intersections.length > 0) {
-        console.log(intersections[0].point);
-    }
-});
+//     if (intersections.length > 0) {
+//         console.log(intersections[0].point);
+//     }
+// });
 
 
 // affichage à l'écran
