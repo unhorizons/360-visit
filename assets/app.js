@@ -89,11 +89,11 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 container.appendChild(renderer.domElement);
 
 // mouvement de la camera
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 camera.position.set(-1, 0, 0);
 controls.rotateSpeed = 0.4;
-controls.enableZoom = true;
+controls.enableZoom = false;
 controls.update();
 
 
@@ -150,11 +150,15 @@ const studentEntry = new Scene('/360-visit/images/student_entry');
 const building2 = new Scene('/360-visit/images/building_2.jpg');
 const justineRoom = new Scene('/360-visit/images/justine_room.jpg');
 const computerRoom = new Scene('/360-visit/images/computer_room.jpg');
+const salle432 = new Scene('/360-visit/images/salle-432.jpg');
+const batiment2Niveau2 = new Scene('/360-visit/images/batiment2-niveau2.jpg');
+const prehaut = new Scene('/360-visit/images/prehaut.jpg');
+const batiment2Niveau1 = new Scene('/360-visit/images/batiment2niveau1.jpg');
 
 building
     .addPoint({position: new THREE.Vector3(47.33136040872327, 2.519483092465857, 14.960382488102171), name: 'Entrée principale', scene: groundFloor})
-    .addPoint({position: new THREE.Vector3(44.451650389036615, 1.8276682097440096, -22.204281428809807), name: 'Entrée étudiants', scene: studentEntry})
-    .addPoint({position: new THREE.Vector3(-18.848850929854457, 7.12026109712192, -45.687766950154774), name: 'Bâtiment UNH 2', scene: building2});
+    .addPoint({position: new THREE.Vector3(-9.315656662743368, 7.947171163850766, -48.38984670180436), name: 'Bâtiment UNH 2', scene: prehaut})
+    .addPoint({position: new THREE.Vector3(-18.848850929854457, 7.12026109712192, -45.687766950154774), name: 'Bâtiment UNH 3', scene: building2});
 groundFloor
     .addPoint({position: new THREE.Vector3(49.60657164089393, -0.4804500526325468, 3.754901360621054), name: 'Sortie', scene: building})
     .addPoint({position: new THREE.Vector3(-49.559082476994014, -0.28871401761632337, 4.332704956613618), name: 'Salle Justine', scene: justineRoom})
@@ -179,24 +183,40 @@ library
 building2
     .addPoint({position: new THREE.Vector3(49.62097342668768, 0.20027903708389744, -3.748425543781566), name: 'Bâtiment UNH 1', scene: building});
 
+prehaut
+    .addPoint({position: new THREE.Vector3(43.72366583395259, -1.578995090103207, 23.59203587721456), name: 'Bâtiment 2 - niveau 1', scene: batiment2Niveau1})
+    .addPoint({position: new THREE.Vector3(-45.86831806465857, -1.8450932991259061, 19.552075412336336), name: 'Bâtiment 2 - niveau 1', scene: batiment2Niveau1});
+
+batiment2Niveau2
+    .addPoint({position: new THREE.Vector3(49.75280461900111, 1.526388967480238, 1.7484642964075152), name: 'Bâtiment 2 - niveau 1', scene: batiment2Niveau1})
+    .addPoint({position: new THREE.Vector3(-49.64989808724905, -1.207922106859196, -2.952140448562496), name: 'Bâtiment 2 - niveau 1', scene: batiment2Niveau1});
+
+batiment2Niveau1
+    .addPoint({position: new THREE.Vector3(49.771496077033426, 2.691353655169208, -0.9776054639882332), name: 'Bâtiment 2 - niveau 2', scene: batiment2Niveau2})
+    .addPoint({position: new THREE.Vector3(-49.1784184343242, 4.215705271505272, 6.238893209048006), name: 'Salle 432', scene: salle432})
+    .addPoint({position: new THREE.Vector3(49.6208718019231, -1.5163556422333082, 3.093004176194953), name: 'Pré-haut', scene: prehaut});
+
+salle432
+    .addPoint({position: new THREE.Vector3(-20.615742832674314, -1.9767563366537468, -45.292477408065345), name: 'Bâtiment 2 - niveau 1', scene: batiment2Niveau1})
+    .addPoint({position: new THREE.Vector3(34.907453864182465, 0.12071518858840591, -35.71527415730909), name: 'Bâtiment 2 - niveau 1', scene: batiment2Niveau1});
+
 building.createScene(scene);
 
 
 
 /// recuperation des points
-// container.addEventListener('click', e => {
-//     let mouse = new THREE.Vector2(
-//         (e.clientX / window.innerWidth) * 2 - 1,
-//         - (e.clientY / window.innerHeight) * 2 + 1
-//     );
+container.addEventListener('click', e => {
+    let mouse = new THREE.Vector2(
+        (e.clientX / window.innerWidth) * 2 - 1,
+        - (e.clientY / window.innerHeight) * 2 + 1
+    );
 
-//     rayCaster.setFromCamera(mouse, camera);
-//     let intersections = rayCaster.intersectObject(groundFloor.sphere);
+    let intersections = rayCaster.intersectObject(batiment2Niveau1.sphere);
 
-//     if (intersections.length > 0) {
-//         console.log(intersections[0].point);
-//     }
-// });
+    if (intersections.length > 0) {
+        console.log(intersections[0].point);
+    }
+});
 
 
 // affichage à l'écran
